@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Gift For You ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #ff8fa3; --secondary: #ff4d6d; --glass: rgba(255, 255, 255, 0.25); --text-main: #590d22; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb); background-size: 400% 400%; animation: gradientBG 15s ease infinite; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: var(--text-main); }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .container { width: 90%; max-width: 500px; min-height: 600px; background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 2px solid rgba(255,255,255,0.4); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); }
+        h1, h2 { font-family: 'Dancing Script', cursive; color: var(--secondary); } h1 { font-size: 2.5rem; }
+        .page { display: none; width: 100%; height: 100%; animation: fadeIn 0.8s ease; flex-direction: column; justify-content: center; align-items: center; }
+        .page.active { display: flex; }
+        input { width: 70%; padding: 12px; border-radius: 50px; border: none; outline: none; background: rgba(255,255,255,0.7); text-align: center; margin-bottom: 20px; }
+        .btn { padding: 12px 35px; border-radius: 50px; border: none; cursor: pointer; background: var(--secondary); color: white; font-weight: 600; box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4); transition: 0.3s; margin: 5px; }
+        .btn:hover { transform: scale(1.05); }
+        /* PUZZLE STYLE */
+        .puzzle-board { display: grid; grid-template-columns: repeat(3, 1fr); width: 300px; height: 300px; gap: 2px; margin: 0 auto; }
+        .puzzle-piece { background-image: url('foto1.jpeg'); background-size: 300px 300px; cursor: pointer; transition: 0.2s; background-color: #fff; }
+        .puzzle-piece.selected { opacity: 0.6; transform: scale(0.9); border: 2px solid var(--secondary); }
+        /* GALLERY STYLE */
+        .gallery-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; width: 100%; padding-bottom: 20px; }
+        .gallery-container::-webkit-scrollbar { display: none; }
+        .gallery-card { flex: 0 0 80%; scroll-snap-align: center; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .gallery-card img { width: 100%; height: 100%; object-fit: cover; }
+        /* MUSIC CARD */
+        .playlist { display: flex; gap: 10px; overflow-x: auto; width: 100%; padding-bottom: 5px; }
+        .song-card { min-width: 100px; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 10px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <audio id="bgm" loop><source src="lagu-lagi.mp3" type="audio/mpeg"></audio>
+
+    <div class="container">
+        <div id="page1" class="page active">
+            <h1>Hi, Special Gift! ❤️</h1>
+            <p>Ada sesuatu buat kamu...</p>
+            <button class="btn" onclick="nextPage(2)">Buka Kado 🎁</button>
+        </div>
+
+        <div id="page2" class="page">
+            <h2>Security Check</h2>
+            <p>Kode: 250825</p>
+            <input type="password" id="passInput" placeholder="Kode...">
+            <button class="btn" onclick="checkPass()">Unlock 🔓</button>
+        </div>
+
+        <div id="page3" class="page">
+            <h2>Susun Foto Ini 🧩</h2>
+            <div class="puzzle-board" id="puzzleBoard"></div>
+            <p style="font-size:0.8rem; margin-top:10px">(Klik 2 kotak buat tuker posisi)</p>
+        </div>
+
+        <div id="page4" class="page">
+            <h2>Our Story 📖</h2>
+            <div style="background:#fff; padding:15px; transform:rotate(-2deg); box-shadow:0 5px 10px rgba(0,0,0,0.1); margin-bottom:20px; width:80%;">
+                <img src="foto2.jpeg" style="width:100%;">
+            </div>
+            <div id="typingText" style="font-size:0.9rem; min-height:100px; text-align:left;"></div>
+            <button class="btn" onclick="nextPage(5)">Lanjut ➡️</button>
+        </div>
+
+        <div id="page5" class="page">
+            <h2>Connected Heart ✈️</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:20px;">
+                <i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--secondary)"></i>
+                <div style="flex-grow:1; border-top:2px dashed var(--secondary); margin:0 10px; position:relative;">
+                    <i class="fas fa-plane" style="position:absolute; top:-10px; left:50%; transform:translateX(-50%);"></i>
+                </div>
+                <i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--secondary)"></i>
+            </div>
+            <p>"Jarak cuma angka, hati kita deket."</p>
+            <button class="btn" onclick="nextPage(6)">Lihat Galeri 📸</button>
+        </div>
+
+        <div id="page6" class="page">
+            <h2>Our Memories</h2>
+            <div class="gallery-container">
+                <div class="gallery-card"><img src="foto3.jpeg"></div>
+                <div class="gallery-card"><img src="foto4.jpeg"></div>
+                <div class="gallery-card"><img src="foto5.jpeg"></div>
+                <div class="gallery-card"><img src="foto6.jpeg"></div>
+                <div class="gallery-card"><img src="foto7.jpeg"></div>
+                <div class="gallery-card"><img src="foto8.jpeg"></div>
+                <div class="gallery-card"><img src="foto9.jpeg"></div>
+                <div class="gallery-card"><img src="foto10.jpeg"></div>
+                <div class="gallery-card"><img src="foto11.jpeg"></div>
+            </div>
+            <br><button class="btn" onclick="nextPage(7)">Lanjut 🎵</button>
+        </div>
+
+        <div id="page7" class="page">
+            <h2>Lagu Favorit 🎶</h2>
+            <div class="playlist">
+                <div class="song-card">❤️ Sempurna<br><small>Andra & Backbone</small></div>
+                <div class="song-card">💜 Bukti<br><small>Virgoun</small></div>
+                <div class="song-card">🩷 Cinta Terbaik<br><small>Cassandra</small></div>
+            </div>
+            <br><button class="btn" onclick="nextPage(8)">Next ❓</button>
+        </div>
+
+        <div id="page8" class="page">
+            <h2>Will You Stay?</h2>
+            <p>Jangan kemana-mana ya...</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" onclick="acceptLove()">YES! 💖</button>
+                <button class="btn" id="btnNo" style="background:#555;" onmouseover="moveBtn(this)" ontouchstart="moveBtn(this)">NO 😢</button>
+            </div>
+        </div>
+
+        <div id="page9" class="page">
+            <h1>Yeay! Love You! 🎉</h1>
+            <div style="background:rgba(255,255,255,0.5); padding:10px; border-radius:10px; margin:15px 0;">
+                Sudah bersama:<br><b id="timer">...</b>
+            </div>
+            <button class="btn" onclick="alert('Peluk Erat! 🤗'); location.reload();">Peluk Aku 🤗</button>
+        </div>
+    </div>
+
+    <script>
+        const PASS = "250825";
+        const START_DATE = new Date("2025-08-25"); // Ganti tanggal jadian disini
+        const LETTER = "Hai sayang... Makasih udah jadi bagian terbaik di hidupku. Semoga kita langgeng terus ya. Love you! ❤️";
+        
+        let audio = document.getElementById('bgm');
+
+        function nextPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page'+id).classList.add('active');
+            if(id===3) initPuzzle();
+            if(id===4) typeWriter();
+            if(id===9) startTimer();
+        }
+
+        function checkPass() {
+            if(document.getElementById('passInput').value === PASS) {
+                audio.play(); nextPage(3);
+            } else { alert("Kode Salah!"); }
+        }
+
+        function initPuzzle() {
+            const board = document.getElementById('puzzleBoard'); board.innerHTML='';
+            let arr = [0,1,2,3,4,5,6,7,8].sort(()=> Math.random()-0.5);
+            let selected = null;
+            arr.forEach(i => {
+                let div = document.createElement('div');
+                div.className='puzzle-piece';
+                div.style.backgroundPosition = `${(i%3)*50}% ${Math.floor(i/3)*50}%`;
+                div.dataset.id = i;
+                div.onclick = () => {
+                    if(!selected) { selected=div; div.classList.add('selected'); }
+                    else {
+                        let tempPos = div.style.backgroundPosition; div.style.backgroundPosition = selected.style.backgroundPosition; selected.style.backgroundPosition = tempPos;
+                        let tempId = div.dataset.id; div.dataset.id = selected.dataset.id; selected.dataset.id = tempId;
+                        selected.classList.remove('selected'); selected=null;
+                        checkWin();
+                    }
+                };
+                board.appendChild(div);
+            });
+        }
+        function checkWin() {
+            let win = true;
+            document.querySelectorAll('.puzzle-piece').forEach((p,i) => { if(p.dataset.id != i) win=false; });
+            if(win) { confetti(); setTimeout(()=>nextPage(4), 1000); }
+        }
+        function typeWriter() {
+            let i=0, target=document.getElementById('typingText');
+            if(target.innerHTML=='') {
+                function type() { if(i<LETTER.length) { target.innerHTML+=LETTER.charAt(i); i++; setTimeout(type,50); } }
+                type();
+            }
+        }
+        function moveBtn(btn) {
+            btn.style.position='fixed';
+            btn.style.left = Math.random()*(window.innerWidth-100)+'px';
+            btn.style.top = Math.random()*(window.innerHeight-100)+'px';
+        }
+        function acceptLove() { confetti(); nextPage(9); }
+        function startTimer() {
+            setInterval(() => {
+                let diff = new Date() - START_DATE;
+                let d = Math.floor(diff/(1000*60*60*24));
+                let h = Math.floor((diff/(1000*60*60))%24);
+                let m = Math.floor((diff/(1000*60))%60);
+                let s = Math.floor((diff/1000)%60);
+                document.getElementById('timer').innerText = `${d} Hari, ${h} Jam, ${m} Menit, ${s} Detik`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
